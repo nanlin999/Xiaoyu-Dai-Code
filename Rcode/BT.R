@@ -200,7 +200,7 @@ for(i.simu in 1:n.rep.simu){
     print(c(i.simu, i.alpha))
   }
   
-  write.csv(result, file = 'tmp/result.csv', quote = F, row.names = F)
+  write.csv(result, file = '/tmp/BT/result.csv', quote = F, row.names = F)
 }
 
 
@@ -426,7 +426,7 @@ for(i.simu in 1:n.rep.simu){
     print(c(i.simu, i.alpha))
   }
   
-  write.csv(result2, file = '/tmp/result2.csv', quote = F, row.names = F)
+  write.csv(result2, file = '/tmp/BT/result2.csv', quote = F, row.names = F)
 }
 
 
@@ -584,7 +584,7 @@ p6 <- ggplot(FDR.sd, aes(x = alpha, y = sd, linetype=method, size=method)) +
   scale_size_manual(values=c(0.3,0.3))
 p6
 ### save the plot ####################
-pdf("/tmp/bt.pdf",width=8,height=12)
+pdf("/tmp/BT/bt.pdf",width=8,height=12)
 
 grid_arrange_shared_legend(p1,p4,p2, p5,p3,p6)
 
