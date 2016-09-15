@@ -14,9 +14,9 @@ P.all <- c(rep(0.5,4500), 0.5 + sample(c(-1,1),500,replace = TRUE)*runif(500,min
 N.temp = N
 P.temp = P.all
 ### repeated simulations ##################
-alpha.all = seq(0.001,0.2,by=0.02)
+alpha.all = seq(0.001,0.2,by=0.002)
 n.alpha = length(alpha.all)
-n.rep.simu = 5
+n.rep.simu = 100
 
 result = matrix(nrow = n.alpha*n.rep.simu, ncol = 15)
 colnames(result) = c('FDR.q', 'FNR.q', 'Power.q',
@@ -85,7 +85,7 @@ for(i.simu in 1:n.rep.simu){
   }
   
   ### dataframe for Chen and Doerge
-  tmp.Chen.BT = data.frame(cbind(X,N-X))
+  tmp.Chen.BT = as.matrix(cbind(X,N-X))
   ### one sample of mid-pvalues ###################
   p.mid = (p.org+p.next)/2
   ### one sample of randomized pvalues #################
@@ -176,10 +176,10 @@ for(i.simu in 1:n.rep.simu){
     
     
     ### Chen and Doerge's method ##########################
-    mt.Chen = GeneralizedFDREstimators(data=tmp.Chen.BT,
-                                       Test= "Binomial Test",
-                                       FDRlevel=alpha, lambda=0.5, epsilon=1)
-    rej.Chen = mt.Chen$Generalized_Estimator$IndicesOfDiscoveries
+    mt.Chen = GeneralizedEstimatorsGrouped(data=tmp.Chen.BT,
+                                       test_in = "Binomial Test", ngrp_in = 3,
+                                       FDRlevel_in=alpha, lambda_in =0.5, epsilon_in =1)
+    rej.Chen = mt.Chen$Gen
     # FDR.Chen[i.simu,i.alpha] = sum(rej.Chen<4501)/length(rej.Chen)
     # FNR.Chen[i.simu,i.alpha] = sum((1:5000)[-rej.Chen]>4500)/(5000-length(rej.Chen))
     result[id,'FDR.Chen'] = sum(rej.Chen<4501)/length(rej.Chen)
@@ -263,7 +263,7 @@ P.all <- c(rep(0.5,4500), 0.5 + sample(c(-1,1),500,replace = TRUE)*runif(500,min
 ### repeated simulations ##################
 alpha.all = seq(0.001,0.2,by=0.002)
 n.alpha = length(alpha.all)
-n.rep.simu = 5
+n.rep.simu = 100
 
 result2 = matrix(nrow = n.alpha*n.rep.simu, ncol = 15)
 colnames(result2) = c('FDR.q', 'FNR.q', 'Power.q',
@@ -331,7 +331,7 @@ for(i.simu in 1:n.rep.simu){
   }
   
   ### dataframe for Chen and Doerge
-  tmp.Chen.BT = data.frame(cbind(X,N-X))
+  tmp.Chen.BT = as.matrix(cbind(X,N-X))
   ### one sample of mid-pvalues ###################
   p.mid = (p.org+p.next)/2
   ### one sample of randomized pvalues #################
@@ -402,10 +402,10 @@ for(i.simu in 1:n.rep.simu){
     
     
     ### Chen and Doerge's method ##########################
-    mt.Chen = GeneralizedFDREstimators(data=tmp.Chen.BT,
-                                       Test= "Binomial Test",
-                                       FDRlevel=alpha, lambda=0.5, epsilon=1)
-    rej.Chen = mt.Chen$Generalized_Estimator$IndicesOfDiscoveries
+    mt.Chen = GeneralizedEstimatorsGrouped(data=tmp.Chen.BT,
+                                       test_in = "Binomial Test", ngrp_in = 3,
+                                       FDRlevel_in =alpha, lambda_in = 0.5, epsilon_in =1)
+    rej.Chen = mt.Chen$Gen
     # FDR.Chen[i.simu,i.alpha] = sum(rej.Chen<4501)/length(rej.Chen)
     # FNR.Chen[i.simu,i.alpha] = sum((1:5000)[-rej.Chen]>4500)/(5000-length(rej.Chen))
     result2[id,'FDR.Chen'] = sum(rej.Chen<4501)/length(rej.Chen)
@@ -426,7 +426,7 @@ for(i.simu in 1:n.rep.simu){
     print(c(i.simu, i.alpha))
   }
   
-  write.csv(result, file = '~/Documents/Paper/Simu_rep/BT/result2.csv', quote = F, row.names = F)
+  write.csv(result2, file = '~/Documents/Paper/Simu_rep/BT/result2.csv', quote = F, row.names = F)
 }
 
 
@@ -523,7 +523,8 @@ p1 <- ggplot(FDR, aes(x = alpha, y = fdr, linetype=method, size=method)) +
   ylab("true FDR") +
   coord_cartesian(xlim = c(0, 0.15), ylim = c(0, 0.2)) +
   scale_linetype_manual(values=c(6,5,2,1,3)) +
-  scale_size_manual(values=c(0.3,0.3,0.6,0.6,0.3))
+  scale_size_manual(values=c(0.3,0.3,0.6,0.6,0.3)) +
+  ggtitle(expression(paste(mu,' = 10')))
 p1
 p2 <- ggplot(Power, aes(x = alpha, y = power, linetype=method, size=method)) + 
   geom_line() + 
@@ -537,7 +538,7 @@ p3 <- ggplot(FDR.sd, aes(x = alpha, y = sd, linetype=method, size=method)) +
   geom_line() + 
   xlab("nominal FDR level") + 
   ylab("standard deviation of FDR") +
-  coord_cartesian(xlim = c(0, 0.15), ylim = c(0, 0.025)) +
+  coord_cartesian(xlim = c(0, 0.15), ylim = c(0, 0.04)) +
   scale_linetype_manual(values=c(2,1)) +
   scale_size_manual(values=c(0.3,0.3))
 p3
@@ -563,7 +564,8 @@ p4 <- ggplot(FDR, aes(x = alpha, y = fdr, linetype=method, size=method)) +
   ylab("true FDR") +
   coord_cartesian(xlim = c(0, 0.15), ylim = c(0, 0.2)) +
   scale_linetype_manual(values=c(6,5,2,1,3)) +
-  scale_size_manual(values=c(0.3,0.3,0.6,0.6,0.3))
+  scale_size_manual(values=c(0.3,0.3,0.6,0.6,0.3)) +
+  ggtitle(expression(paste(mu,' = 15')))
 p4
 p5 <- ggplot(Power, aes(x = alpha, y = power, linetype=method, size=method)) + 
   geom_line() + 
@@ -587,67 +589,6 @@ pdf("/Users/xiaoyudai/Documents/Paper/Simu_rep/BT/bt.pdf",width=8,height=12)
 grid_arrange_shared_legend(p1,p4,p2, p5,p3,p6)
 
 dev.off()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-plot(alpha.all,FDR.q.mean.1,cex=.1,type='l',xlim=c(0,0.2),ylim=c(0,0.2))
-points(alpha.all,FDR.Gilbert.mean.1,cex=.1,col='green',type='l')
-points(alpha.all,FDR.Chen.mean.1,cex=.1,col='orange',type='l')
-points(alpha.all,FDR.mcf.mean.1,cex=.1,col='red',type='l')
-points(alpha.all,FDR.mid.mean.1,cex=.1,col='yellow',type='l')
-abline(0,1)
-
-plot(alpha.all,FDR.q.sd.1,cex=.1,type='l',xlim=c(0.02,0.2),ylim=c(0,0.05))
-points(alpha.all,FDR.Gilbert.sd.1,cex=.1,col='green',type='l')
-points(alpha.all,FDR.Chen.sd.1,cex=.1,col='orange',type='l')
-points(alpha.all,FDR.mcf.sd.1,cex=.1,col='red',type='l')
-points(alpha.all,FDR.mid.sd.1,cex=.1,col='yellow',type='l')
-
-plot(alpha.all,FNR.q.mean.1,cex=.1,type='l')
-points(alpha.all,FNR.Gilbert.mean.1,cex=.1,col='green',type='l')
-points(alpha.all,FNR.Chen.mean.1,cex=.1,col='orange',type='l')
-points(alpha.all,FNR.mcf.mean.1,cex=.1,col='red',type='l')
-points(alpha.all,FNR.mid.mean.1,cex=.1,col='yellow',type='l')
-
-
-
-plot(alpha.all,FDR.q.mean.2,cex=.1,type='l',xlim=c(0,0.2),ylim=c(0,0.2))
-points(alpha.all,FDR.Gilbert.mean.2,cex=.1,col='green',type='l')
-points(alpha.all,FDR.Chen.mean.2,cex=.1,col='orange',type='l')
-points(alpha.all,FDR.mcf.mean.2,cex=.1,col='red',type='l')
-points(alpha.all,FDR.mid.mean.2,cex=.1,col='yellow',type='l')
-abline(0,1)
-
-plot(alpha.all,FDR.q.sd.2,cex=.1,type='l',xlim=c(0.02,0.2),ylim=c(0,0.05))
-points(alpha.all,FDR.Gilbert.sd.2,cex=.1,col='green',type='l')
-points(alpha.all,FDR.Chen.sd.2,cex=.1,col='orange',type='l')
-points(alpha.all,FDR.mcf.sd.2,cex=.1,col='red',type='l')
-points(alpha.all,FDR.mid.sd.2,cex=.1,col='yellow',type='l')
-
-plot(alpha.all,FNR.q.mean.2,cex=.1,type='l')
-points(alpha.all,FNR.Gilbert.mean.2,cex=.1,col='green',type='l')
-points(alpha.all,FNR.Chen.mean.2,cex=.1,col='orange',type='l')
-points(alpha.all,FNR.mcf.mean.2,cex=.1,col='red',type='l')
-points(alpha.all,FNR.mid.mean.2,cex=.1,col='yellow',type='l')
-
-
-
-
-
 
 
 
