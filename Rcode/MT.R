@@ -1,5 +1,5 @@
 library(Rcpp)
-sourceCpp("/Users/xiaoyudai/Documents/Paper/Rcode/mcf.cpp")
+sourceCpp("/tmp/mcf.cpp")
 
 MCF = function(p.org, p.next, alpha , n.rep=1000){
   # MCF-based multiple testing procedure.
