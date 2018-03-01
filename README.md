@@ -1,13 +1,12 @@
-# MCF-paper
-Rcode: 
-  Codes for the paper: Dai, X., Lin, N., Li, D., Wang, T.(2015) A non-randomized procedure for discrete multiple testing based on individual randomized test.
+Code for Xiaoyu Dai's PhD research at Washington University in St. Louis, supervised by Professor Nan Lin.
 
-  BT.R: simulations for Binomial test (Note that: in Simulation code, we didn't use the wrapped-up funciton to implement the MCF-based method to avoid sampling randomized p-values multiple times for different alpha's)
+Based on:
 
-  FET.R: simulations for Fisher's Exact test
+MCF-multtest: 
+Xiaoyu Dai, Nan Lin, Daofeng Li, Ting Wang. A non-randomized procedure for heterogeneous discrete multiple testing based on randomized tests.
 
-  MT.R: a function to implement the MCF-based method
+MCFOT:
+Xiaoyu Dai, Nan Lin, Daofeng Li, Ting Wang. MCF-adjusted ordered testing procedure on heterogeneous multiple discrete testing with prior information.
 
-Supply:
-  Supplementary material to: A non-randomized procedure for discrete multiple testing based on individual randomized test. 
-
+CRF-LIS:
+Xiaoyu Dai, Nan Lin, Daofeng Li, Ting Wang. Differentially methylated region detections using conditional random field.
